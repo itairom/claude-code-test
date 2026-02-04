@@ -112,9 +112,9 @@ describe('TimerApp - Countdown Mode', () => {
 
     fireEvent.click(modeButton);
     expect(screen.getByText('Switch to Stopwatch')).toBeInTheDocument();
-    expect(screen.getByText('Hours:')).toBeInTheDocument();
-    expect(screen.getByText('Minutes:')).toBeInTheDocument();
-    expect(screen.getByText('Seconds:')).toBeInTheDocument();
+    expect(screen.getByText('Hours')).toBeInTheDocument();
+    expect(screen.getByText('Minutes')).toBeInTheDocument();
+    expect(screen.getByText('Seconds')).toBeInTheDocument();
   });
 
   it('sets countdown time and counts down', () => {
@@ -126,7 +126,7 @@ describe('TimerApp - Countdown Mode', () => {
     // Set countdown for 10 seconds
     const secondsInput = screen.getAllByRole('spinbutton')[2];
     fireEvent.change(secondsInput, { target: { value: '10' } });
-    fireEvent.click(screen.getByText('Set'));
+    fireEvent.click(screen.getByText('Set Duration'));
 
     expect(screen.getByText('00:00:10')).toBeInTheDocument();
 
@@ -152,7 +152,7 @@ describe('TimerApp - Countdown Mode', () => {
     // Set countdown for 3 seconds
     const secondsInput = screen.getAllByRole('spinbutton')[2];
     fireEvent.change(secondsInput, { target: { value: '3' } });
-    fireEvent.click(screen.getByText('Set'));
+    fireEvent.click(screen.getByText('Set Duration'));
 
     // Start countdown
     fireEvent.click(screen.getByText('Start'));
@@ -161,7 +161,7 @@ describe('TimerApp - Countdown Mode', () => {
       vi.advanceTimersByTime(3000);
     });
     expect(screen.getByText('00:00:00')).toBeInTheDocument();
-    expect(screen.getByText("Time's up!")).toBeInTheDocument();
+    expect(screen.getByText("Time's Up!")).toBeInTheDocument();
     expect(screen.getByText('Start')).toBeInTheDocument();
   });
 
@@ -174,7 +174,7 @@ describe('TimerApp - Countdown Mode', () => {
     // Set countdown for 10 seconds
     const secondsInput = screen.getAllByRole('spinbutton')[2];
     fireEvent.change(secondsInput, { target: { value: '10' } });
-    fireEvent.click(screen.getByText('Set'));
+    fireEvent.click(screen.getByText('Set Duration'));
 
     // Start and pause
     fireEvent.click(screen.getByText('Start'));
@@ -199,7 +199,7 @@ describe('TimerApp - Countdown Mode', () => {
     // Set countdown for 15 seconds
     const secondsInput = screen.getAllByRole('spinbutton')[2];
     fireEvent.change(secondsInput, { target: { value: '15' } });
-    fireEvent.click(screen.getByText('Set'));
+    fireEvent.click(screen.getByText('Set Duration'));
 
     // Start, run, then reset
     fireEvent.click(screen.getByText('Start'));
@@ -223,7 +223,7 @@ describe('TimerApp - Countdown Mode', () => {
     fireEvent.change(inputs[0], { target: { value: '1' } });
     fireEvent.change(inputs[1], { target: { value: '2' } });
     fireEvent.change(inputs[2], { target: { value: '3' } });
-    fireEvent.click(screen.getByText('Set'));
+    fireEvent.click(screen.getByText('Set Duration'));
 
     expect(screen.getByText('01:02:03')).toBeInTheDocument();
   });
