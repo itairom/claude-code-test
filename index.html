@@ -5,8 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chronos - Precision Timer</title>
     <meta name="description" content="A beautifully designed dual-mode timer with stopwatch and countdown functionality." />
+
+    <!-- Material Design Resources -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#49e619",
+              "background-light": "#f6f8f6",
+              "background-dark": "#152111",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"],
+            },
+            borderRadius: {
+              "DEFAULT": "1rem",
+              "lg": "2rem",
+              "xl": "3rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
   </head>
-  <body>
+  <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen">
     <div id="root"></div>
     <script type="module" src="/main.jsx"></script>
   </body>

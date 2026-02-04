@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 function TimerApp() {
   const [mode, setMode] = useState('stopwatch');
@@ -537,6 +538,23 @@ function TimerApp() {
         </div>
 
         <div className="brand">Chronos</div>
+
+        <Link
+          to="/v2"
+          className="absolute top-40 right-40 font-family: 'Orbitron', monospace; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.3em; color: rgba(255, 255, 255, 0.2); text-transform: uppercase; hover:color: rgba(255, 255, 255, 0.4); transition: all 0.3s ease; text-decoration: none;"
+          style={{
+            fontFamily: 'Orbitron, monospace',
+            fontSize: '0.55rem',
+            fontWeight: '700',
+            letterSpacing: '0.3em',
+            color: 'rgba(255, 255, 255, 0.2)',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          v2 Material
+        </Link>
 
         <div className="timer-ring">
           <svg viewBox="0 0 300 300">

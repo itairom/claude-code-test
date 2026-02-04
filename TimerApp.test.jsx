@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import TimerApp from './TimerApp';
+
+const renderWithRouter = (component) => {
+  return render(<MemoryRouter>{component}</MemoryRouter>);
+};
 
 describe('TimerApp - Stopwatch Mode', () => {
   beforeEach(() => {
@@ -12,14 +17,14 @@ describe('TimerApp - Stopwatch Mode', () => {
   });
 
   it('renders initial state with timer at 00:00:00', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     expect(screen.getByText('00:00:00')).toBeInTheDocument();
     expect(screen.getByText('Start')).toBeInTheDocument();
     expect(screen.getByText('Reset')).toBeInTheDocument();
   });
 
   it('starts timer when Start button is clicked', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     const startButton = screen.getByText('Start');
 
     fireEvent.click(startButton);
@@ -37,7 +42,7 @@ describe('TimerApp - Stopwatch Mode', () => {
   });
 
   it('pauses timer when Pause button is clicked', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     const startButton = screen.getByText('Start');
 
     fireEvent.click(startButton);
@@ -56,7 +61,7 @@ describe('TimerApp - Stopwatch Mode', () => {
   });
 
   it('resets timer when Reset button is clicked', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     const startButton = screen.getByText('Start');
 
     fireEvent.click(startButton);
@@ -73,7 +78,7 @@ describe('TimerApp - Stopwatch Mode', () => {
   });
 
   it('formats time correctly with hours', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     const startButton = screen.getByText('Start');
 
     fireEvent.click(startButton);
@@ -85,7 +90,7 @@ describe('TimerApp - Stopwatch Mode', () => {
   });
 
   it('formats time correctly with minutes only', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     const startButton = screen.getByText('Start');
 
     fireEvent.click(startButton);
@@ -107,7 +112,7 @@ describe('TimerApp - Countdown Mode', () => {
   });
 
   it('switches to countdown mode when button is clicked', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
     const modeButton = screen.getByText('Switch to Countdown');
 
     fireEvent.click(modeButton);
@@ -118,7 +123,7 @@ describe('TimerApp - Countdown Mode', () => {
   });
 
   it('sets countdown time and counts down', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
 
     // Switch to countdown mode
     fireEvent.click(screen.getByText('Switch to Countdown'));
@@ -144,7 +149,7 @@ describe('TimerApp - Countdown Mode', () => {
   });
 
   it('stops at zero and shows Time\'s up! message', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
 
     // Switch to countdown mode
     fireEvent.click(screen.getByText('Switch to Countdown'));
@@ -166,7 +171,7 @@ describe('TimerApp - Countdown Mode', () => {
   });
 
   it('pauses countdown correctly', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
 
     // Switch to countdown mode
     fireEvent.click(screen.getByText('Switch to Countdown'));
@@ -191,7 +196,7 @@ describe('TimerApp - Countdown Mode', () => {
   });
 
   it('resets countdown to initial time', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
 
     // Switch to countdown mode
     fireEvent.click(screen.getByText('Switch to Countdown'));
@@ -213,7 +218,7 @@ describe('TimerApp - Countdown Mode', () => {
   });
 
   it('correctly formats countdown time with hours and minutes', () => {
-    render(<TimerApp />);
+    renderWithRouter(<TimerApp />);
 
     // Switch to countdown mode
     fireEvent.click(screen.getByText('Switch to Countdown'));
