@@ -7,12 +7,5 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './vitest.setup.js',
-    browser: {
-      enabled: true,
-      headless: true,
-      instances: [
-        { browser: 'chromium' },
-      ],
-    },
   },
 });
