@@ -89,7 +89,7 @@ TimeWheel.displayName = 'TimeWheel';
 const PresetButton = memo(({ label, minutes, onClick, active }) => (
   <button
     onClick={() => onClick(0, minutes, 0)}
-    className={`px-6 py-3 rounded-2xl whitespace-nowrap transition-all ${
+    className={`px-6 py-3 rounded-2xl whitespace-nowrap transition-all flex-shrink-0 ${
       active
         ? 'bg-[#49e619] text-[#0a0f0a] font-bold'
         : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:border-[#49e619]/30'
@@ -137,6 +137,80 @@ const NavTab = memo(({ mode, targetMode, icon, label, onClick, isDesktop }) => {
 
 NavTab.displayName = 'NavTab';
 
+// Preset carousel data
+const PRESETS = [
+  { label: '1min', minutes: 1 },
+  { label: '5min', minutes: 5 },
+  { label: '15min', minutes: 15 },
+  { label: '30min', minutes: 30 },
+  { label: '45min', minutes: 45 },
+  { label: '60min', minutes: 60 },
+];
+
+// Custom hook for swipe/drag gesture on carousel
+const useCarouselSwipe = (carouselRef, isDesktop) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    // Skip on desktop/touch devices where native scroll is better
+    if (isDesktop) return;
+
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    let startX = 0;
+    let scrollLeft = 0;
+    let isDown = false;
+
+    const handleMouseDown = (e) => {
+      isDown = true;
+      setIsDragging(true);
+      startX = e.pageX - carousel.offsetLeft;
+      scrollLeft = carousel.scrollLeft;
+      carousel.style.cursor = 'grabbing';
+      carousel.style.scrollBehavior = 'auto';
+    };
+
+    const handleMouseLeave = () => {
+      isDown = false;
+      setIsDragging(false);
+      carousel.style.cursor = 'grab';
+      carousel.style.scrollBehavior = 'smooth';
+    };
+
+    const handleMouseUp = () => {
+      isDown = false;
+      setIsDragging(false);
+      carousel.style.cursor = 'grab';
+      carousel.style.scrollBehavior = 'smooth';
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - carousel.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      carousel.scrollLeft = scrollLeft - walk;
+    };
+
+    carousel.addEventListener('mousedown', handleMouseDown);
+    carousel.addEventListener('mouseleave', handleMouseLeave);
+    carousel.addEventListener('mouseup', handleMouseUp);
+    carousel.addEventListener('mousemove', handleMouseMove);
+
+    carousel.style.cursor = 'grab';
+
+    return () => {
+      carousel.removeEventListener('mousedown', handleMouseDown);
+      carousel.removeEventListener('mouseleave', handleMouseLeave);
+      carousel.removeEventListener('mouseup', handleMouseUp);
+      carousel.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [carouselRef, isDesktop]);
+
+  return isDragging;
+};
+
 // Main App Component
 function MaterialTimerApp2() {
   const navigate = useNavigate();
@@ -150,9 +224,11 @@ function MaterialTimerApp2() {
   const [initialTime, setInitialTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [carouselPage, setCarouselPage] = useState(0);
 
   const intervalRef = useRef(null);
   const startTimeRef = useRef(0);
+  const carouselRef = useRef(null);
 
   // Detect screen size for responsive layout
   useEffect(() => {
@@ -164,6 +240,25 @@ function MaterialTimerApp2() {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  // Track carousel scroll position
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleScroll = () => {
+      const scrollLeft = carousel.scrollLeft;
+      const itemWidth = carousel.firstElementChild?.offsetWidth || 0;
+      const page = Math.round(scrollLeft / itemWidth);
+      setCarouselPage(page);
+    };
+
+    carousel.addEventListener('scroll', handleScroll);
+    return () => carousel.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Enable drag/swipe on carousel
+  const isDraggingCarousel = useCarouselSwipe(carouselRef, isDesktop);
 
   // Timer interval
   useEffect(() => {
@@ -424,12 +519,55 @@ function MaterialTimerApp2() {
               />
             </div>
 
-            {/* Quick Presets */}
-            <div className="flex flex-wrap gap-3 justify-center mb-8">
-              <PresetButton label="1min" minutes={1} onClick={setPreset} active={false} />
-              <PresetButton label="5min" minutes={5} onClick={setPreset} active={false} />
-              <PresetButton label="15min" minutes={15} onClick={setPreset} active={false} />
-              <PresetButton label="30min" minutes={30} onClick={setPreset} active={false} />
+            {/* Quick Presets Carousel */}
+            <div className="relative w-full max-w-md mb-8">
+              <div
+                ref={carouselRef}
+                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 py-2 -mx-4 scroll-smooth"
+              >
+                {PRESETS.map((preset) => (
+                  <div key={preset.label} className="snap-center">
+                    <PresetButton
+                      label={preset.label}
+                      minutes={preset.minutes}
+                      onClick={setPreset}
+                      active={false}
+                    />
+                  </div>
+                ))}
+                {/* Spacer for end padding */}
+                <div className="w-2 flex-shrink-0 snap-center" />
+              </div>
+              {/* Fade edges indicator */}
+              <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#0a0f0a] to-transparent pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#0a0f0a] to-transparent pointer-events-none" />
+              {/* Scroll indicator dots */}
+              <div className="flex justify-center gap-1.5 mt-3">
+                {PRESETS.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      const carousel = carouselRef.current;
+                      if (carousel) {
+                        const targetButton = carousel.children[index];
+                        if (targetButton) {
+                          targetButton.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest',
+                            inline: 'center'
+                          });
+                        }
+                      }
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === carouselPage
+                        ? 'bg-[#49e619] scale-125'
+                        : 'bg-white/20 hover:bg-white/30'
+                    }`}
+                    aria-label={`Go to preset ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </>
         )}

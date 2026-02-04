@@ -296,7 +296,7 @@ describeIf('MaterialTimerApp2 - Countdown Mode Tests', () => {
     }
 
     await waitFor(() => {
-      const preset5min = screen.getAllByText('5 min').find(btn => btn.tagName === 'BUTTON');
+      const preset5min = screen.getAllByText('5min').find(btn => btn.tagName === 'BUTTON');
       if (preset5min) {
         fireEvent.click(preset5min);
 
@@ -696,5 +696,76 @@ describeIf('MaterialTimerApp2 - Edge Cases and Error Handling', () => {
         expect(screen.getByText(/Lap 3/)).toBeInTheDocument();
       }
     }
+  });
+});
+
+describeIf('MaterialTimerApp2 - Carousel Tests', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    mockNavigate.mockClear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('renders all preset buttons in carousel', async () => {
+    renderWithRouter(<MaterialTimerApp2 />);
+
+    const countdownTab = screen.getAllByText('Countdown').find(el =>
+      el.tagName === 'BUTTON' || el.closest('button')
+    );
+
+    if (countdownTab) {
+      fireEvent.click(countdownTab);
+    }
+
+    await waitFor(() => {
+      expect(screen.getByText('1min')).toBeInTheDocument();
+      expect(screen.getByText('5min')).toBeInTheDocument();
+      expect(screen.getByText('15min')).toBeInTheDocument();
+      expect(screen.getByText('30min')).toBeInTheDocument();
+      expect(screen.getByText('45min')).toBeInTheDocument();
+      expect(screen.getByText('60min')).toBeInTheDocument();
+    });
+  });
+
+  it('renders carousel dot indicators', async () => {
+    const { container } = renderWithRouter(<MaterialTimerApp2 />);
+
+    const countdownTab = screen.getAllByText('Countdown').find(el =>
+      el.tagName === 'BUTTON' || el.closest('button')
+    );
+
+    if (countdownTab) {
+      fireEvent.click(countdownTab);
+    }
+
+    await waitFor(() => {
+      // Check for dot indicators (rounded-full divs)
+      const dots = container.querySelectorAll('.rounded-full');
+      expect(dots.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('carousel buttons are clickable', async () => {
+    renderWithRouter(<MaterialTimerApp2 />);
+
+    const countdownTab = screen.getAllByText('Countdown').find(el =>
+      el.tagName === 'BUTTON' || el.closest('button')
+    );
+
+    if (countdownTab) {
+      fireEvent.click(countdownTab);
+    }
+
+    await waitFor(() => {
+      const preset15min = screen.getAllByText('15min').find(btn => btn.tagName === 'BUTTON');
+      if (preset15min) {
+        fireEvent.click(preset15min);
+        // Should not throw
+        expect(preset15min).toBeInTheDocument();
+      }
+    });
   });
 });
