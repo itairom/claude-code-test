@@ -119,6 +119,20 @@ function TimerApp() {
           background-size: 50px 50px;
           pointer-events: none;
           mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+          transition: background-image 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .app-container.countdown {
+          background:
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 245, 212, 0.08), transparent),
+            radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0, 187, 249, 0.05), transparent),
+            #0a0a0f;
+        }
+
+        .app-container.countdown::before {
+          background-image:
+            linear-gradient(rgba(0, 245, 212, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 245, 212, 0.02) 1px, transparent 1px);
         }
 
         .mode-indicator {
@@ -140,6 +154,11 @@ function TimerApp() {
         .mode-dot.active {
           background: #ff6b35;
           box-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
+        }
+
+        .mode-dot:nth-child(2).active {
+          background: #00f5d4;
+          box-shadow: 0 0 20px rgba(0, 245, 212, 0.6);
         }
 
         .timer-ring {
@@ -488,13 +507,17 @@ function TimerApp() {
           animation: blink 1s ease-in-out infinite;
         }
 
+        .status-bar.countdown .status-dot.running {
+          background: #00f5d4;
+        }
+
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.3; }
         }
       `}</style>
 
-      <div className="app-container">
+      <div className={`app-container ${mode === 'countdown' ? 'countdown' : ''}`}>
         <svg width="0" height="0" style={{ position: 'absolute' }}>
           <defs>
             <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -615,7 +638,7 @@ function TimerApp() {
           {mode === 'stopwatch' ? 'Switch to Countdown' : 'Switch to Stopwatch'}
         </button>
 
-        <div className="status-bar">
+        <div className={`status-bar ${mode === 'countdown' ? 'countdown' : ''}`}>
           <div className="status-item">
             <span className={`status-dot ${isRunning ? 'running' : ''}`} />
             {isRunning ? 'Active' : 'Standby'}
