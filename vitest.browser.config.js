@@ -9,10 +9,7 @@ export default defineConfig({
     setupFiles: './vitest.setup.js',
     browser: {
       enabled: true,
-      headless: true,
-      instances: [
-        { browser: 'chromium' },
-      ],
+      name: 'chromium',
     },
   },
 });
