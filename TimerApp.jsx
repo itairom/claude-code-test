@@ -574,7 +574,7 @@ function TimerApp() {
             />
           </svg>
           <div>
-            <div className={`time-display ${isFinished ? 'finished' : ''}`}>
+            <div className={`time-display ${isFinished ? 'finished' : ''}`} data-testid="timer-display">
               {formattedTime}
             </div>
             <div className="time-display-label">
